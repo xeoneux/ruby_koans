@@ -1,3 +1,6 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
 require File.expand_path(File.dirname(__FILE__) + '/neo')
 
 # Greed is a dice game where you roll up to five dice to accumulate
@@ -30,9 +33,27 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # Your goal is to write the score method.
 
 def score(dice)
-  # You need to write this method
+  score = 0
+  nums = Array.new(6, 0)
+  dice.each { |num| nums[num - 1] += 1 }
+
+  nums.each_with_index do |num, idx|
+    count = num
+
+    if count > 2
+      count -= 3
+      score += 1000 if idx.zero?
+      score += (idx + 1) * 100 unless idx.zero?
+    end
+
+    score += 50 * count if idx == 4
+    score += 100 * count if idx.zero?
+  end
+
+  score
 end
 
+# AboutScoringProject
 class AboutScoringProject < Neo::Koan
   def test_score_of_an_empty_list_is_zero
     assert_equal 0, score([])
@@ -47,31 +68,30 @@ class AboutScoringProject < Neo::Koan
   end
 
   def test_score_of_multiple_1s_and_5s_is_the_sum_of_individual_scores
-    assert_equal 300, score([1,5,5,1])
+    assert_equal 300, score([1, 5, 5, 1])
   end
 
   def test_score_of_single_2s_3s_4s_and_6s_are_zero
-    assert_equal 0, score([2,3,4,6])
+    assert_equal 0, score([2, 3, 4, 6])
   end
 
   def test_score_of_a_triple_1_is_1000
-    assert_equal 1000, score([1,1,1])
+    assert_equal 1000, score([1, 1, 1])
   end
 
   def test_score_of_other_triples_is_100x
-    assert_equal 200, score([2,2,2])
-    assert_equal 300, score([3,3,3])
-    assert_equal 400, score([4,4,4])
-    assert_equal 500, score([5,5,5])
-    assert_equal 600, score([6,6,6])
+    assert_equal 200, score([2, 2, 2])
+    assert_equal 300, score([3, 3, 3])
+    assert_equal 400, score([4, 4, 4])
+    assert_equal 500, score([5, 5, 5])
+    assert_equal 600, score([6, 6, 6])
   end
 
   def test_score_of_mixed_is_sum
-    assert_equal 250, score([2,5,2,2,3])
-    assert_equal 550, score([5,5,5,5])
-    assert_equal 1100, score([1,1,1,1])
-    assert_equal 1200, score([1,1,1,1,1])
-    assert_equal 1150, score([1,1,1,5,1])
+    assert_equal 250, score([2, 5, 2, 2, 3])
+    assert_equal 550, score([5, 5, 5, 5])
+    assert_equal 1100, score([1, 1, 1, 1])
+    assert_equal 1200, score([1, 1, 1, 1, 1])
+    assert_equal 1150, score([1, 1, 1, 5, 1])
   end
-
 end
